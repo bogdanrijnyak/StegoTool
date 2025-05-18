@@ -1,0 +1,374 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\bmp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\bmp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|q:\\arpspoofer\\downloads\\steganography-master\\steganography-master\\stegonagraph\\stegpanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\stegpanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\psnrcalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\psnrcalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10BD570D-3C83-4AE8-85DA-1B1A4531AECD}|Solution Items{10BD570D-3C83-4AE8-85DA-1B1A4531AECD}|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\PSNRCalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10BD570D-3C83-4AE8-85DA-1B1A4531AECD}|Solution Items{10BD570D-3C83-4AE8-85DA-1B1A4531AECD}|solutionrelative:PSNRCalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\stegpanel.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\stegpanel.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\jpeg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\jpeg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\image\\true.png||{58961B49-13E0-48C0-9258-13CBC4D40279}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\image\\true.png||{58961B49-13E0-48C0-9258-13CBC4D40279}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\image\\false.png||{58961B49-13E0-48C0-9258-13CBC4D40279}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\image\\false.png||{58961B49-13E0-48C0-9258-13CBC4D40279}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\image\\favicon.ico||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\image\\favicon.ico||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\mainform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|Steganography||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\hufftree.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\hufftree.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\helptools.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\helptools.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\wav.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\wav.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\properties\\resources.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\properties\\resources.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\aes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\aes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\stegonagraph\\stegpanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}|Stegonagraph\\Steganography.csproj|solutionrelative:stegonagraph\\stegpanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Steganography",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Steganography.csproj",
+              "RelativeDocumentMoniker": "Stegonagraph\\Steganography.csproj",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Steganography.csproj",
+              "RelativeToolTip": "Stegonagraph\\Steganography.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-05-10T20:58:28.042Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MainForm.cs [Design]",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\MainForm.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\MainForm.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\MainForm.cs [Design]",
+              "RelativeToolTip": "Stegonagraph\\MainForm.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-26T00:30:19.487Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BMP.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\BMP.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\BMP.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\BMP.cs*",
+              "RelativeToolTip": "Stegonagraph\\BMP.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHUAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T20:04:37.264Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StegPanel.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\StegPanel.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\StegPanel.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\StegPanel.cs",
+              "RelativeToolTip": "Stegonagraph\\StegPanel.cs",
+              "ViewState": "AgIAALcBAAAAAAAAAAAhwMsBAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T20:53:15.157Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "StegPanel.Designer.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\StegPanel.Designer.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\StegPanel.Designer.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\StegPanel.Designer.cs",
+              "RelativeToolTip": "Stegonagraph\\StegPanel.Designer.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAiwEUAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T23:42:31.861Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PSNRCalculator.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\PSNRCalculator.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\PSNRCalculator.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\PSNRCalculator.cs",
+              "RelativeToolTip": "Stegonagraph\\PSNRCalculator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T16:18:08.997Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\MainForm.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\MainForm.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\MainForm.cs",
+              "RelativeToolTip": "Stegonagraph\\MainForm.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAxwAIAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-26T00:35:49.219Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PSNRCalculator.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\PSNRCalculator.cs",
+              "RelativeDocumentMoniker": "PSNRCalculator.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\PSNRCalculator.cs",
+              "RelativeToolTip": "PSNRCalculator.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAACsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T15:44:31.163Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "JPEG.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\JPEG.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\JPEG.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\JPEG.cs",
+              "RelativeToolTip": "Stegonagraph\\JPEG.cs",
+              "ViewState": "AgIAAMUBAAAAAAAAAAAUwBACAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T20:04:12.131Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Program.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\Program.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Program.cs",
+              "RelativeToolTip": "Stegonagraph\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T23:18:58.895Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "true.png",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Image\\true.png",
+              "RelativeDocumentMoniker": "Stegonagraph\\Image\\true.png",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Image\\true.png",
+              "RelativeToolTip": "Stegonagraph\\Image\\true.png",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2025-05-09T22:19:50.466Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "MainForm.Designer.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\MainForm.Designer.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\MainForm.Designer.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\MainForm.Designer.cs",
+              "RelativeToolTip": "Stegonagraph\\MainForm.Designer.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAABRwIUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T23:23:12.397Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "false.png",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Image\\false.png",
+              "RelativeDocumentMoniker": "Stegonagraph\\Image\\false.png",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Image\\false.png",
+              "RelativeToolTip": "Stegonagraph\\Image\\false.png",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2025-05-09T22:20:00.65Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "favicon.ico - Icon [256x256, 32 bit, PNG]",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Image\\favicon.ico",
+              "RelativeDocumentMoniker": "Stegonagraph\\Image\\favicon.ico",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Image\\favicon.ico - Icon [256x256, 32 bit, PNG]",
+              "RelativeToolTip": "Stegonagraph\\Image\\favicon.ico - Icon [256x256, 32 bit, PNG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001525|",
+              "WhenOpened": "2025-05-11T21:40:08.828Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "WAV.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\WAV.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\WAV.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\WAV.cs",
+              "RelativeToolTip": "Stegonagraph\\WAV.cs",
+              "ViewState": "AgIAAN0AAAAAAAAAAAAAwPwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T23:09:49.023Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "HelpTools.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\HelpTools.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\HelpTools.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\HelpTools.cs",
+              "RelativeToolTip": "Stegonagraph\\HelpTools.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T20:04:30.956Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "packages.config",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\packages.config",
+              "RelativeDocumentMoniker": "Stegonagraph\\packages.config",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\packages.config",
+              "RelativeToolTip": "Stegonagraph\\packages.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-05-10T21:23:13.162Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "HuffTree.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\HuffTree.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\HuffTree.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\HuffTree.cs",
+              "RelativeToolTip": "Stegonagraph\\HuffTree.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T20:04:29.947Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "AssemblyInfo.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Properties\\AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\Properties\\AssemblyInfo.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Properties\\AssemblyInfo.cs",
+              "RelativeToolTip": "Stegonagraph\\Properties\\AssemblyInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T23:41:57.212Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Resources.Designer.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Properties\\Resources.Designer.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\Properties\\Resources.Designer.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\Properties\\Resources.Designer.cs",
+              "RelativeToolTip": "Stegonagraph\\Properties\\Resources.Designer.cs",
+              "ViewState": "AgIAACUAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T23:42:19.657Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "AES.cs",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\AES.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\AES.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\AES.cs",
+              "RelativeToolTip": "Stegonagraph\\AES.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAAAgwIQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-09T22:15:17.339Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "StegPanel.cs [Design]",
+              "DocumentMoniker": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\StegPanel.cs",
+              "RelativeDocumentMoniker": "Stegonagraph\\StegPanel.cs",
+              "ToolTip": "Q:\\arpspoofer\\Downloads\\Steganography-master\\Steganography-master\\Stegonagraph\\StegPanel.cs [Design]",
+              "RelativeToolTip": "Stegonagraph\\StegPanel.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-09T20:53:13.152Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steganography", "Stegonagraph\Steganography.csproj", "{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{10BD570D-3C83-4AE8-85DA-1B1A4531AECD}"
+	ProjectSection(SolutionItems) = preProject
+		PSNRCalculator.cs = PSNRCalculator.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473AEFC2-B7C4-4446-83AB-DC4639AFDB7C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BFFE5BBF-73D2-4F42-AEDC-0C7E839CC29C}
+	EndGlobalSection
+EndGlobal

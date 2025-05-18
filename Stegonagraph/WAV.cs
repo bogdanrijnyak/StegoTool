@@ -9,240 +9,200 @@ namespace Stegonagraph
 {
     class WAV
     {
-        public int NumberOfChannels { get; set; }
-        public int BlockAlignBytes { get; set; }
-        public int BitsPerSample { get; set; }
-        public ulong DataStartPosition { get; set; }
-        public ulong AudioDataLength { get; set; }
-        private byte[] wavData;
+        public int NumberOfChannels { set; get; }
+        public int BlockAlignBytes { set; get; }
+        public int BitsPerSample { set; get; }
+        public UInt64 StartPos { set; get; }
+        public UInt64 AudioInfoCount { set; get; }
+        private byte[] wavFile;
 
-        public WAV(string filePath)
+        public WAV(String filePath)
         {
-            // Зчитуємо весь WAV-файл у байтовий масив
-            wavData = File.ReadAllBytes(filePath);
+            this.wavFile = File.ReadAllBytes(filePath);
 
-            // Позиція курсора для читання заголовка
-            ulong cursorPosition = 0;
+            String binaryStr = "";
+            UInt64 cursor = 0;
 
-            // Перескакуємо до поля "NumberOfChannels" (offset 22)
-            cursorPosition += 22;
-            string bitBuffer = "";
+            cursor += 22;
 
-            // Зчитуємо 2 байти кількості каналів, у форматі little-endian
-            for (ulong i = cursorPosition; i < cursorPosition + 2; i++)
+            for (var index = cursor; index < cursor + 2; index++)
             {
-                string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[i], 2), 8);
-                bitBuffer = byteString + bitBuffer;
-            }
-            NumberOfChannels = Convert.ToInt32(bitBuffer, 2);
-            bitBuffer = "";
-
-            // Перескакуємо до поля "BlockAlign" (через 10 байт після каналів)
-            cursorPosition += 10;
-            for (ulong i = cursorPosition; i < cursorPosition + 2; i++)
-            {
-                string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[i], 2), 8);
-                bitBuffer = byteString + bitBuffer;
-            }
-            BlockAlignBytes = Convert.ToInt32(bitBuffer, 2);
-            bitBuffer = "";
-
-            // Далі зчитуємо "BitsPerSample" (2 байти)
-            cursorPosition += 2;
-            for (ulong i = cursorPosition; i < cursorPosition + 2; i++)
-            {
-                string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[i], 2), 8);
-                bitBuffer = byteString + bitBuffer;
-            }
-            BitsPerSample = Convert.ToInt32(bitBuffer, 2);
-            bitBuffer = "";
-
-            // Шукаємо заголовок "data" для початку звукових даних
-            while (!(bitBuffer == "data") && cursorPosition < (ulong)wavData.Length - 4)
-            {
-                bitBuffer = ((char)wavData[cursorPosition]).ToString()
-                          + ((char)wavData[cursorPosition + 1]).ToString()
-                          + ((char)wavData[cursorPosition + 2]).ToString()
-                          + ((char)wavData[cursorPosition + 3]).ToString();
-                cursorPosition++;
+                String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[index], 2), 8);
+                binaryStr = byteStr + binaryStr;
             }
 
-            // Перескакуємо до довжини блоку даних
-            cursorPosition += 4;
-            bitBuffer = "";
-            for (ulong i = cursorPosition; i < cursorPosition + 4; i++)
-            {
-                string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[i], 2), 8);
-                bitBuffer = byteString + bitBuffer;
-            }
-            AudioDataLength = Convert.ToUInt64(bitBuffer, 2);
+            this.NumberOfChannels = Convert.ToInt32(binaryStr, 2);
+            binaryStr = "";
+            cursor += 10;
 
-            // Встановлюємо початкову позицію звукових семплів
-            DataStartPosition = cursorPosition + 4;
+            for (var index = cursor; index < cursor + 2; index++)
+            {
+                String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[index], 2), 8);
+                binaryStr = byteStr + binaryStr;
+            }
+
+            this.BlockAlignBytes = Convert.ToInt32(binaryStr, 2);
+            binaryStr = "";
+            cursor += 2;
+
+            for (var index = cursor; index < cursor + 2; index++)
+            {
+                String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[index], 2), 8);
+                binaryStr = byteStr + binaryStr;
+            }
+
+            this.BitsPerSample = Convert.ToInt32(binaryStr, 2);
+
+            while (!(binaryStr == "data" || cursor == (UInt64)wavFile.Length))
+            {
+                binaryStr = ((char)wavFile[cursor]).ToString() + ((char)wavFile[cursor + 1]).ToString() + ((char)wavFile[cursor + 2]).ToString() + ((char)wavFile[cursor + 3]).ToString();
+                cursor++;
+            }
+
+            binaryStr = "";
+            cursor += 3;
+
+            for (var index = cursor; index < cursor + 4; index++)
+            {
+                String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[index], 2), 8);
+                binaryStr = byteStr + binaryStr;
+            }
+
+            cursor += 4;
+            this.AudioInfoCount = Convert.ToUInt64(binaryStr, 2);
+            this.StartPos = cursor;
         }
 
-        public void WavEncode(List<byte> hiddenData, string outputPath, byte[] key)
+        public void WavEncode(List<Byte> hiddenData, String outputPath, byte[] keyArray)
         {
-            // Поточна позиція у звукових байтах
-            ulong samplePosition = DataStartPosition;
-            uint keyPosition = 0;
-            // Буфер біт прихованої інформації
-            string dataBitBuffer = "";
-            // Скільки семплів на фрейм (моно=1, стерео=2)
-            int sampleCount = NumberOfChannels == 1 ? 1 : 2;
+            UInt64 position = StartPos;
+            UInt32 stepIndex = 0;
+            String dataBits = "";
+            int channelCount = NumberOfChannels == 1 ? 1 : 2;
 
-            // Вбудовуємо дані по байтах
-            foreach (byte dataByte in hiddenData)
+            for (int dataIndex = 0; dataIndex < hiddenData.Count; dataIndex++)
             {
-                // Додаємо байт у бітовий буфер
-                dataBitBuffer += HelpTools.AutoAddByte(Convert.ToString(dataByte, 2), 8);
+                dataBits += HelpTools.AutoAddByte(Convert.ToString(hiddenData[dataIndex], 2), 8);
 
-                // Поки накопичилося достатньо біт для одного блоку
-                while (dataBitBuffer.Length >= sampleCount * key[keyPosition % key.Length])
+                while (dataBits.Length > (channelCount * keyArray[stepIndex % keyArray.Length]))
                 {
-                    // Зберігаємо початкову позицію блоку
-                    ulong blockStartPos = samplePosition;
-                    // Зчитуємо семпл у двічі оберненому порядку бітів
-                    string sampleBits = "";
-                    for (int i = 0; i < BlockAlignBytes; i++)
+                    UInt64 bufferPosition = position;
+                    String sampleBits = "";
+
+                    for (int byteIndex = 0; byteIndex < BlockAlignBytes; byteIndex++)
                     {
-                        string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[samplePosition++], 2), 8);
-                        sampleBits = byteString + sampleBits;
+                        String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[position++], 2), 8);
+                        sampleBits = byteStr + sampleBits;
                     }
 
-                    // Відновлюємо позицію для переписування
-                    samplePosition = blockStartPos;
+                    position = bufferPosition;
 
-                    // Пересуваємо семпл по бітовим порціям (розбивання)
-                    int totalSamples = BlockAlignBytes * 8 / BitsPerSample - 1;
-                    for (int i = 0; i < totalSamples; i++)
+                    for (int rotate = 0; rotate < BlockAlignBytes * 8 / BitsPerSample - 1; rotate++)
                     {
                         sampleBits = sampleBits.Substring(BitsPerSample) + sampleBits.Substring(0, BitsPerSample);
                     }
 
-                    // Для кожного каналу семпл-байт
-                    for (int channel = 0; channel < sampleCount; channel++)
+                    for (int ch = 0; ch < channelCount; ch++)
                     {
-                        // Відокремлюємо поточні біти семпла
-                        string channelBits = sampleBits.Substring(0, BitsPerSample);
-                        // Обрізаємо біт за ключем
-                        int bitsToHide = key[keyPosition % key.Length];
-                        channelBits = channelBits.Substring(0, channelBits.Length - bitsToHide)
-                                    + dataBitBuffer.Substring(0, bitsToHide);
-                        dataBitBuffer = dataBitBuffer.Substring(bitsToHide);
+                        String bitField = sampleBits.Substring(0, BitsPerSample);
+                        bitField = bitField.Substring(0, bitField.Length - keyArray[stepIndex % keyArray.Length]);
+                        bitField += dataBits.Substring(0, keyArray[stepIndex % keyArray.Length]);
+                        dataBits = dataBits.Substring(keyArray[stepIndex % keyArray.Length]);
 
-                        // Записуємо назад у wavData по байтах
-                        for (int bitIndex = channelBits.Length; bitIndex > 0; bitIndex -= 8)
+                        for (int bit = bitField.Length; bit > 0; bit -= 8)
                         {
-                            wavData[samplePosition++] = Convert.ToByte(channelBits.Substring(bitIndex - 8, 8), 2);
+                            wavFile[position++] = Convert.ToByte(bitField.Substring(bit - 8, 8), 2);
                         }
 
-                        // Зсуваємо семпл на наступний канал
                         sampleBits = sampleBits.Substring(BitsPerSample);
                     }
 
-                    // Перехід до наступного фрейма
-                    samplePosition = blockStartPos + (ulong)BlockAlignBytes;
-                    keyPosition++;
+                    position = bufferPosition + (UInt64)BlockAlignBytes;
+                    stepIndex++;
                 }
             }
 
-            // Доповнюємо нулями, щоб вирівняти до блоку
-            while (dataBitBuffer.Length % (sampleCount * key[keyPosition % key.Length]) != 0)
-            {
-                dataBitBuffer += "0";
-            }
+            while (dataBits.Length % (channelCount * keyArray[stepIndex % keyArray.Length]) != 0)
+                dataBits += "0";
 
-            // Запис залишається тих самих дій, допоки є біт у буфері
-            while (dataBitBuffer.Length > 0)
+            while (dataBits.Length != 0)
             {
-                ulong blockStartPos = samplePosition;
-                string sampleBits = "";
-                for (int i = 0; i < BlockAlignBytes; i++)
+                UInt64 bufferPosition = position;
+                String sampleBits = "";
+
+                for (int byteIndex = 0; byteIndex < BlockAlignBytes; byteIndex++)
                 {
-                    string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[samplePosition++], 2), 8);
-                    sampleBits = byteString + sampleBits;
+                    String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[position++], 2), 8);
+                    sampleBits = byteStr + sampleBits;
                 }
-                samplePosition = blockStartPos;
-                int totalSamples = BlockAlignBytes * 8 / BitsPerSample - 1;
-                for (int i = 0; i < totalSamples; i++)
+
+                position = bufferPosition;
+
+                for (int rotate = 0; rotate < BlockAlignBytes * 8 / BitsPerSample - 1; rotate++)
                 {
                     sampleBits = sampleBits.Substring(BitsPerSample) + sampleBits.Substring(0, BitsPerSample);
                 }
 
-                for (int channel = 0; channel < sampleCount; channel++)
+                for (int ch = 0; ch < channelCount; ch++)
                 {
-                    string channelBits = sampleBits.Substring(0, BitsPerSample);
-                    int bitsToHide = key[keyPosition % key.Length];
-                    channelBits = channelBits.Substring(0, channelBits.Length - bitsToHide)
-                                + dataBitBuffer.Substring(0, bitsToHide);
-                    dataBitBuffer = dataBitBuffer.Substring(bitsToHide);
+                    String bitField = sampleBits.Substring(0, BitsPerSample);
+                    bitField = bitField.Substring(0, bitField.Length - keyArray[stepIndex % keyArray.Length]);
+                    bitField += dataBits.Substring(0, keyArray[stepIndex % keyArray.Length]);
+                    dataBits = dataBits.Substring(keyArray[stepIndex % keyArray.Length]);
 
-                    for (int bitIndex = channelBits.Length; bitIndex > 0; bitIndex -= 8)
+                    for (int bit = bitField.Length; bit > 0; bit -= 8)
                     {
-                        wavData[samplePosition++] = Convert.ToByte(channelBits.Substring(bitIndex - 8, 8), 2);
+                        wavFile[position++] = Convert.ToByte(bitField.Substring(bit - 8, 8), 2);
                     }
 
                     sampleBits = sampleBits.Substring(BitsPerSample);
                 }
 
-                samplePosition = blockStartPos + (ulong)BlockAlignBytes;
-                keyPosition++;
+                position = bufferPosition + (UInt64)BlockAlignBytes;
+                stepIndex++;
             }
 
-            // Зберігаємо модифікований WAV-файл
-            File.WriteAllBytes(outputPath, wavData);
+            File.WriteAllBytes(outputPath, this.wavFile);
         }
 
-        public List<byte> WavDecode(int byteCount, byte[] key)
+        public List<byte> WavDecode(int expectedLength, byte[] keyArray)
         {
-            // Початкова позиція даних
-            ulong samplePosition = DataStartPosition;
-            uint keyPosition = 0;
-            // Список для збережених байтів
+            UInt64 position = StartPos;
+            UInt32 stepIndex = 0;
             List<byte> extractedData = new List<byte>();
-            // Бітовий буфер для видобування
-            string extractBitBuffer = "";
-            int sampleCount = NumberOfChannels == 1 ? 1 : 2;
+            String bitStream = "";
+            int channelCount = NumberOfChannels == 1 ? 1 : 2;
 
-            // Читаємо доти, поки не отримаємо потрібну кількість байтів
-            while (extractedData.Count < byteCount)
+            while (extractedData.Count != expectedLength)
             {
-                ulong blockStartPos = samplePosition;
-                string sampleBits = "";
+                UInt64 bufferPosition = position;
+                String sampleBits = "";
 
-                // Зчитуємо блок даних
-                for (int i = 0; i < BlockAlignBytes; i++)
+                for (int byteIndex = 0; byteIndex < BlockAlignBytes; byteIndex++)
                 {
-                    string byteString = HelpTools.AutoAddByte(Convert.ToString(wavData[samplePosition++], 2), 8);
-                    sampleBits = byteString + sampleBits;
+                    String byteStr = HelpTools.AutoAddByte(Convert.ToString(wavFile[position++], 2), 8);
+                    sampleBits = byteStr + sampleBits;
                 }
-                samplePosition = blockStartPos;
 
-                // Реконструюємо порядок бітів
-                int totalSamples = BlockAlignBytes * 8 / BitsPerSample - 1;
-                for (int i = 0; i < totalSamples; i++)
-                {
+                position = bufferPosition;
+
+                for (int rotate = 0; rotate < BlockAlignBytes * 8 / BitsPerSample - 1; rotate++)
                     sampleBits = sampleBits.Substring(BitsPerSample) + sampleBits.Substring(0, BitsPerSample);
-                }
 
-                // Для кожного каналу витягуємо приховані біти
-                for (int channel = 0; channel < sampleCount; channel++)
+                for (int ch = 0; ch < channelCount; ch++)
                 {
-                    string channelBits = sampleBits.Substring(0, BitsPerSample);
-                    int bitsToExtract = key[keyPosition % key.Length];
-                    extractBitBuffer += channelBits.Substring(channelBits.Length - bitsToExtract, bitsToExtract);
+                    String bitField = sampleBits.Substring(0, BitsPerSample);
+                    bitStream += bitField.Substring(bitField.Length - keyArray[stepIndex % keyArray.Length], keyArray[stepIndex % keyArray.Length]);
                     sampleBits = sampleBits.Substring(BitsPerSample);
                 }
 
-                samplePosition = blockStartPos + (ulong)BlockAlignBytes;
-                keyPosition++;
+                position = bufferPosition + (UInt64)BlockAlignBytes;
+                stepIndex++;
 
-                // Щоразу, як накопичилось >=8 біт, конвертуємо в байт
-                while (extractBitBuffer.Length >= 8)
+                while (bitStream.Length >= 8)
                 {
-                    extractedData.Add(Convert.ToByte(extractBitBuffer.Substring(0, 8), 2));
-                    extractBitBuffer = extractBitBuffer.Substring(8);
+                    extractedData.Add(Convert.ToByte(bitStream.Substring(0, 8), 2));
+                    bitStream = bitStream.Substring(8);
                 }
             }
 

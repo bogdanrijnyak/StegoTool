@@ -16,7 +16,7 @@ public class PSNRCalculator
                 Color c1 = img1.GetPixel(x, y);
                 Color c2 = img2.GetPixel(x, y);
 
-                // Можно использовать только яркость, либо каждую компоненту RGB
+                //  Можна використовувати тільки яскравість, або кожну компоненту RGB
                 double errorR = c1.R - c2.R;
                 double errorG = c1.G - c2.G;
                 double errorB = c1.B - c2.B;

@@ -45,6 +45,7 @@ namespace Stegonagraph
         /// <summary>PKCS‑7 padding (adds 1–N bytes, where N is block size, to make length a multiple of N)</summary>
         private static byte[] Pad(byte[] data, int blockSize = 16)
         {
+            if (data == null) throw new ArgumentNullException(nameof(data));
             int padLen = blockSize - (data.Length % blockSize);
             // PKCS#7: if data.Length is already a multiple of blockSize, a whole new block of padding is added.
             byte[] padded = new byte[data.Length + padLen];
@@ -81,11 +82,6 @@ namespace Stegonagraph
                     return unpaddedData;
                 }
             }
-            // Якщо padding невалідний, це може вказувати на помилку розшифрування або пошкоджені дані.
-            // Повернення оригінальних даних може призвести до подальших проблем.
-            // Краще кидати виняток або повертати null/порожній масив з попередженням.
-            // Для узгодження з попередньою логікою, повернемо дані як є, але це не ідеально.
-            // throw new System.Security.Cryptography.CryptographicException("Invalid PKCS#7 padding.");
             return data;
         }
 
@@ -93,13 +89,10 @@ namespace Stegonagraph
         {
             if (plainBytes == null) throw new ArgumentNullException(nameof(plainBytes));
 
-            // Створюємо екземпляр AES, передаючи пароль-рядок, як очікує конструктор AES.cs
-            // Ваш конструктор AES(String key) обробляє ключ (дублює/обрізає до 16 символів) і викликає KeyShedudle
             AES aes = new AES(password);
 
             byte[] paddedPlainBytes = Pad(plainBytes);
 
-            // Ваш клас AES.Encrypt(byte[]) обробляє весь масив, включаючи ітерацію по блоках
             byte[] cipherBytesResult = aes.Encrypt(paddedPlainBytes);
 
             return new List<byte>(cipherBytesResult);
@@ -109,12 +102,8 @@ namespace Stegonagraph
         {
             if (cipherBytes == null) throw new ArgumentNullException(nameof(cipherBytes));
 
-            // Довжина шифротексту ПОВИННА бути кратною розміру блоку AES (16 байт)
-            // Ваш AES.DeCrypt(byte[]) обробляє дані поблоково. Якщо довжина не кратна 16,
-            // останній неповний блок буде проігноровано циклом for (int i = 0; i < plainText.Length / 16; i++).
             if (cipherBytes.Length % 16 != 0)
             {
-                // Це вказує на пошкоджені дані або помилку на попередньому етапі.
                 throw new ArgumentException("Довжина шифротексту для розшифрування має бути кратною 16 байтам. Дані можуть бути пошкоджені.", nameof(cipherBytes));
             }
             if (cipherBytes.Length == 0)
@@ -124,7 +113,7 @@ namespace Stegonagraph
 
             AES aes = new AES(password);
 
-            byte[] decryptedPaddedBytes = aes.DeCrypt(cipherBytes); // Використовуємо DeCrypt
+            byte[] decryptedPaddedBytes = aes.DeCrypt(cipherBytes);
 
             byte[] unpaddedBytes = Unpad(decryptedPaddedBytes);
 
@@ -136,7 +125,7 @@ namespace Stegonagraph
     {
         private readonly List<Point> contCords = new List<Point>();
         private readonly bool tpHide;
-        private Process loadingProcess; // Змінено ім'я змінної для узгодженості
+        private Process loadingProcess;
         private readonly byte[] stegKey;
 
         public StegPanel(bool hideUnhide, byte[] stegKey)
@@ -177,7 +166,6 @@ namespace Stegonagraph
 
                 try
                 {
-                    // Перевіряємо існування файлу перед запуском
                     if (File.Exists(waitFormPath))
                         loadingProcess = Process.Start(waitFormPath);
                 }
@@ -189,24 +177,22 @@ namespace Stegonagraph
                     Bitmap bp;
 
                     String displayName = fi.Name;
-                    // Обережне обрізання імені файлу
                     int lastDot = displayName.LastIndexOf('.');
-                    if (lastDot > 0 && lastDot < displayName.Length - 1) // Є розширення
+                    if (lastDot > 0 && lastDot < displayName.Length - 1)
                     {
                         string nameWithoutExt = displayName.Substring(0, lastDot);
-                        string ext = displayName.Substring(lastDot); // Включаючи крапку
+                        string ext = displayName.Substring(lastDot);
                         if (nameWithoutExt.Length > (255 - ext.Length))
                         {
                             displayName = nameWithoutExt.Substring(0, (255 - ext.Length)) + ext;
                         }
                     }
-                    else if (displayName.Length > 255) // Немає розширення або воно некоректне
+                    else if (displayName.Length > 255)
                     {
                         displayName = displayName.Substring(0, 255);
                     }
 
-
-                    bool isDuplicate = false; // Змінено ім'я змінної
+                    bool isDuplicate = false;
                     for (int i = 0; i < containerGridView.Rows.Count; i++)
                     {
                         if (containerGridView.Rows[i].Cells[0].Value != null &&
@@ -237,36 +223,37 @@ namespace Stegonagraph
                                     for (int i = 0; i < bp.Width * bp.Height; i++)
                                     {
                                         byte keyByte = stegKey[i % stegKey.Length];
-                                        int bitsPerChannel = (keyByte == 0) ? 1 : Math.Min((int)keyByte, 8);
+                                        // Узгоджуємо з GetActualBitsFromKey, якщо така логіка є в BMP.cs,
+                                        // або використовуємо пряме значення, якщо BMP.cs його так інтерпретує.
+                                        // Поточна логіка StegPanel (з попередніх версій) використовувала пряме значення:
+                                        // int bitsPerChannel = (keyByte == 0) ? 1 : Math.Min((int)keyByte, 8);
+                                        // Залишаємо її, якщо BMP.cs очікує це.
+                                        // Якщо BMP.cs має GetActualArrColor, то треба використовувати її логіку.
+                                        // Для прикладу, припускаємо, що BMP.cs очікує значення з ключа як є (але не 0).
+                                        int bitsPerChannel = (keyByte == 0) ? 1 : (int)keyByte;
+                                        if (bitsPerChannel > 8) bitsPerChannel = 8; // Обмеження LSB
                                         info += (ulong)(3 * bitsPerChannel);
                                     }
                                     containerGridView.Rows.Add(displayName, info / 8, fi.FullName);
                                 }
                                 break;
                             case ".wav":
-                                // Припускаємо, що WAV не реалізує IDisposable, тому без using
                                 WAV wavInfo = new WAV(fi.FullName);
-                                if (File.Exists(Path.Combine(imageResourcePath, "true.png")))
-                                    pbPicture.Image = Image.FromFile(Path.Combine(imageResourcePath, "true.png"));
-                                else pbPicture.Image = null;
+                                pbPicture.Image = Image.FromFile("Image/true.png");
 
                                 info = 0;
-                                // Використовуємо AudioDataLength, як у вашій старій версії, якщо воно є, або AudioInfoCount
-                                ulong samples = wavInfo.AudioDataLength / (ulong)wavInfo.BlockAlignBytes; // Припускаємо, що AudioDataLength існує
-                                for (ulong i = 0; i < samples; i++)
-                                {
-                                    byte keyByte = stegKey[i % (ulong)stegKey.Length];
-                                    int bitsPerSampleForKey = (keyByte == 0) ? 1 : Math.Min((int)keyByte, wavInfo.BitsPerSample);
-                                    info += (ulong)bitsPerSampleForKey;
-                                }
-                                // Логіка для стерео була (info * 2) / 8. Якщо потрібно, відновіть.
-                                // Поточна логіка розраховує біти на семпл, а не на канал.
-                                containerGridView.Rows.Add(displayName, info / 8, fi.FullName);
+                                for (UInt64 i = 0; i < wavInfo.AudioInfoCount / (ulong)wavInfo.BlockAlignBytes; i++)
+                                    info += (ulong)stegKey[i % (ulong)stegKey.Length];
+
+                                if (wavInfo.NumberOfChannels == 1)
+                                    containerGridView.Rows.Add(fi.Name, info / 8, fi.FullName);
+                                else
+                                    containerGridView.Rows.Add(fi.Name, (info * 2) / 8, fi.FullName);
                                 break;
                             case ".jpg":
                             case ".jpeg":
                                 JPEG jpeg = new JPEG(fi.FullName, dataGridView.Enabled);
-                                jpeg.GetInfo(stegKey); // Ваш метод
+                                jpeg.GetInfo(stegKey);
                                 if (File.Exists(Path.Combine(imageResourcePath, "true.png")))
                                     pbPicture.Image = Image.FromFile(Path.Combine(imageResourcePath, "true.png"));
                                 else pbPicture.Image = null;
@@ -293,14 +280,14 @@ namespace Stegonagraph
                     }
                 }
 
-                try { loadingProcess?.Kill(); loadingProcess?.Dispose(); } catch { } // Додано Dispose
+                try { loadingProcess?.Kill(); loadingProcess?.Dispose(); } catch { }
 
                 containerGridView.ClearSelection();
-                if (containerGridView.Rows.Count > 0) // Додано перевірку перед встановленням CurrentCell
+                if (containerGridView.Rows.Count > 0)
                 {
                     containerGridView.CurrentCell = null;
                 }
-            } // Кінець if (result == DialogResult.OK)
+            }
             labelContainer.Text = "Може приховати: " + GetPoints(GetSize(containerGridView)) + " байт";
         }
         #endregion
@@ -314,7 +301,7 @@ namespace Stegonagraph
             {
                 foreach (String file in openFileDialog1.FileNames)
                 {
-                    FileInfo fi = new FileInfo(file); // Змінено ім'я змінної
+                    FileInfo fi = new FileInfo(file);
                     byte[] bytes;
                     try
                     {
@@ -325,7 +312,6 @@ namespace Stegonagraph
                         MessageBox.Show($"Не вдалося прочитати файл {fi.Name}: {ex.Message}", "Помилка читання файлу", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         continue;
                     }
-
 
                     String nameOnly = fi.Name;
                     int lastDot = fi.Name.LastIndexOf('.');
@@ -349,7 +335,7 @@ namespace Stegonagraph
                         finalNameForDisplay = finalNameForDisplay.Substring(0, 255);
                     }
 
-                    bool isDuplicate = false; // Змінено ім'я змінної
+                    bool isDuplicate = false;
                     for (int i = 0; i < dataGridView.Rows.Count; i++)
                     {
                         if (dataGridView.Rows[i].Cells[0].Value != null &&
@@ -371,24 +357,9 @@ namespace Stegonagraph
                     int singleFileMetadataSize = 1 + namePartLength * 2 + 1 + extPartLength + 5;
                     int totalEntrySize = singleFileMetadataSize + bytes.Length;
 
-                    // Логіка для overhead (10 байт для першого файлу) має бути узгоджена з HideData
-                    // Якщо GetSize рахує суму того, що в колонці, то ці 10 байт треба додавати окремо при перевірці
-                    // або додавати до першого елементу.
-                    // Поточний код додає 10 до першого елементу, що додається в dataGridView.
-                    // Це означає, що GetSize(dataGridView) буде включати ці 10 байт, якщо є хоча б один файл.
-                    if (dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) == 0)
-                    {
-                        // totalEntrySize += 10; // Цей рядок був у вашій версії, але він додає 10 до *кожного* файлу, якщо він перший
-                        // Потрібно додавати 10 до загального розміру, а не до розміру кожного файлу.
-                        // Краще залишити entrySize як розмір файлу + його метадані, а 10 байт заголовка враховувати окремо.
-                        // Однак, ваша стара логіка: int overhead = dataGridView.Rows.Count == 0 ? 10 : 0;
-                        // dataGridView.Rows.Add(fi.Name, overhead + ..., fi.FullName);
-                        // Я залишу вашу логіку розрахунку entrySize з overhead.
-                    }
-                    int overhead = dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) == 0 ? 10 : 0;
-                    totalEntrySize = overhead + singleFileMetadataSize + bytes.Length;
-
-
+                    // Логіка для overhead (10 байт для першого файлу)
+                    // GetSize(dataGridView) тепер рахує суму "чистих" розмірів (файл + його індивідуальні метадані)
+                    // Загальний заголовок (10 байт) буде додано в HideData та враховано в btnStart_Click
                     dataGridView.Rows.Add(finalNameForDisplay, totalEntrySize, fi.FullName);
                 }
                 dataGridView.ClearSelection();
@@ -397,17 +368,23 @@ namespace Stegonagraph
                     dataGridView.CurrentCell = null;
                 }
             }
-            labelHide.Text = "Розмір файлу: " + GetPoints(GetSize(dataGridView)) + " байт";
+
+            ulong currentTotalDataSize = GetSize(dataGridView);
+            // Додаємо 10 байт загального заголовка, тільки якщо є файли для приховування
+            if (dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) > 0)
+            {
+                currentTotalDataSize += 10;
+            }
+            labelHide.Text = "Розмір файлу: " + GetPoints(currentTotalDataSize) + " байт";
         }
         #endregion
 
         #region Helpers
         private static ulong GetSize(DataGridView dgv)
         {
-            ulong byteCount = 0; // Змінено ім'я змінної
+            ulong byteCount = 0;
             for (int i = 0; i < dgv.Rows.Count; i++)
             {
-                // Перевірка, чи рядок не є новим порожнім рядком і чи значення існує
                 if (!dgv.Rows[i].IsNewRow && dgv.Rows[i].Cells[1].Value != null)
                     byteCount += Convert.ToUInt64(dgv.Rows[i].Cells[1].Value.ToString());
             }
@@ -418,7 +395,7 @@ namespace Stegonagraph
             string str = num.ToString();
             if (str.Length <= 3) return str;
 
-            StringBuilder endStr = new StringBuilder(); // Змінено на StringBuilder
+            StringBuilder endStr = new StringBuilder();
             int firstPartLength = str.Length % 3;
             if (firstPartLength == 0) firstPartLength = 3;
 
@@ -435,34 +412,34 @@ namespace Stegonagraph
         #region Start (encode / decode)
         private void btnStart_Click(object sender, EventArgs e)
         {
-            // Перевірка, чи є хоча б один реальний рядок (не "новий рядок")
             if (containerGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) == 0)
             {
                 MessageBox.Show("Будь ласка, додайте контейнер!");
                 return;
             }
 
-            if (dataGridView.Enabled && dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) == 0)
+            if (tpHide && dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) == 0)
             {
                 MessageBox.Show("Будь ласка, додайте інформацію для приховування!");
                 return;
             }
 
-            if (checkBox.Checked && string.IsNullOrWhiteSpace(encryptTextBox.Text)) // Використовуємо IsNullOrWhiteSpace
+            if (checkBox.Checked && string.IsNullOrWhiteSpace(encryptTextBox.Text))
             {
                 MessageBox.Show("Будь ласка, введіть пароль для шифрування!");
                 return;
             }
 
-            // Розмір даних для приховування. Якщо це перший файл, GetSize вже включає 10 байт заголовка (згідно з логікою SelectDataBtn_Click)
-            ulong sizeOfDataToHide = GetSize(dataGridView);
-            // Якщо шифруємо, реальний розмір може збільшитися через padding.
-            // Але ми перевіряємо початковий розмір відкритого тексту + метадані.
-            // Більш точна перевірка мала б враховувати можливе збільшення після шифрування.
-
-            if (tpHide && GetSize(containerGridView) < sizeOfDataToHide) // Змінено перевірку
+            ulong sizeOfDataPayloadOnly = GetSize(dataGridView);
+            ulong requiredTotalSizeToHide = sizeOfDataPayloadOnly;
+            if (tpHide && dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow) > 0)
             {
-                MessageBox.Show("Розмір прихованого файлу перевищує місткість контейнера!");
+                requiredTotalSizeToHide += 10;
+            }
+
+            if (tpHide && GetSize(containerGridView) < requiredTotalSizeToHide)
+            {
+                MessageBox.Show($"Розмір даних для приховування ({GetPoints(requiredTotalSizeToHide)} байт) перевищує загальну місткість контейнерів ({GetPoints(GetSize(containerGridView))} байт)!", "Недостатньо місця", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -473,7 +450,7 @@ namespace Stegonagraph
                 return;
             }
 
-            savePath = folderBrowserDialog1.SelectedPath + Path.DirectorySeparatorChar; // Використовуємо Path.DirectorySeparatorChar
+            savePath = folderBrowserDialog1.SelectedPath + Path.DirectorySeparatorChar;
 
             string waitFormPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "WaitForm.exe");
             try
@@ -488,60 +465,66 @@ namespace Stegonagraph
             else
                 ExtractData(savePath);
         }
+
         private void HideData(string savePath)
         {
-            // Використовуємо Stopwatch з попередньої версії
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            StringBuilder psnrResults = new StringBuilder(); // Для збору результатів PSNR
+            StringBuilder psnrResults = new StringBuilder();
 
-            List<Byte> dataToActuallyEmbed = new List<Byte>(); // Сюди збираємо всі дані перед шифруванням
-
-            // 1. Збираємо метадані та тіла всіх файлів
+            List<byte> allFilesCombinedPayload = new List<byte>();
             int actualFileCount = dataGridView.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow);
-            if (actualFileCount == 0 && tpHide) { /* обробити, якщо немає файлів для приховування */ stopwatch.Stop(); try { loadingProcess?.Kill(); } catch { } MessageBox.Show("Немає файлів для приховування."); return; }
 
-            List<byte> allFilesPayload = new List<byte>();
+            if (actualFileCount == 0)
+            {
+                stopwatch.Stop();
+                try { loadingProcess?.Kill(); loadingProcess?.Dispose(); } catch { }
+                MessageBox.Show("Немає файлів для приховування.", "Операція скасована", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             for (int i = 0; i < dataGridView.Rows.Count; i++)
             {
                 if (dataGridView.Rows[i].IsNewRow) continue;
+
                 string path = dataGridView.Rows[i].Cells[2].Value.ToString();
                 FileInfo fileInfo = new FileInfo(path);
 
                 string fileName = fileInfo.Name;
-                int lastDot = fileName.LastIndexOf('.');
-                string namePart = (lastDot > 0) ? fileName.Substring(0, lastDot) : fileName;
-                string extPart = (lastDot > 0 && lastDot < fileName.Length - 1) ? fileName.Substring(lastDot + 1) : "";
+                int lastDotIdx = fileName.LastIndexOf('.');
+                string namePart = (lastDotIdx > 0 && lastDotIdx < fileName.Length - 1) ? fileName.Substring(0, lastDotIdx) : fileName;
+                string extPart = (lastDotIdx > 0 && lastDotIdx < fileName.Length - 1) ? fileName.Substring(lastDotIdx + 1) : "";
 
                 if (namePart.Length > 255) namePart = namePart.Substring(0, 255);
 
-                allFilesPayload.Add((byte)namePart.Length);
-                allFilesPayload.AddRange(Encoding.Unicode.GetBytes(namePart));
-                allFilesPayload.Add((byte)extPart.Length);
-                allFilesPayload.AddRange(Encoding.ASCII.GetBytes(extPart));
+                allFilesCombinedPayload.Add((byte)namePart.Length);
+                allFilesCombinedPayload.AddRange(Encoding.Unicode.GetBytes(namePart));
+                allFilesCombinedPayload.Add((byte)extPart.Length);
+                allFilesCombinedPayload.AddRange(Encoding.ASCII.GetBytes(extPart));
 
                 byte[] body = File.ReadAllBytes(path);
                 ulong bodyLen = (ulong)body.Length;
-                for (int k = 4; k >= 0; k--) allFilesPayload.Add((byte)(bodyLen >> (k * 8)));
-                allFilesPayload.AddRange(body);
+                for (int k = 4; k >= 0; k--)
+                {
+                    allFilesCombinedPayload.Add((byte)(bodyLen >> (k * 8)));
+                }
+                allFilesCombinedPayload.AddRange(body);
             }
 
-            // 2. Додаємо загальний заголовок
-            ulong totalPayloadSize = (ulong)allFilesPayload.Count;
-            for (int i = 4; i >= 0; i--) dataToActuallyEmbed.Add((byte)(totalPayloadSize >> (i * 8)));
+            List<byte> dataToEmbedInContainers = new List<byte>();
+            ulong totalPayloadSize = (ulong)allFilesCombinedPayload.Count;
+            for (int i = 4; i >= 0; i--) dataToEmbedInContainers.Add((byte)(totalPayloadSize >> (i * 8)));
 
             ulong fileCountHeader = (ulong)actualFileCount;
-            for (int i = 4; i >= 0; i--) dataToActuallyEmbed.Add((byte)(fileCountHeader >> (i * 8)));
+            for (int i = 4; i >= 0; i--) dataToEmbedInContainers.Add((byte)(fileCountHeader >> (i * 8)));
 
-            dataToActuallyEmbed.AddRange(allFilesPayload);
+            dataToEmbedInContainers.AddRange(allFilesCombinedPayload);
 
-
-            // 3. Шифрування, якщо потрібно
             if (checkBox.Checked)
             {
                 try
                 {
-                    dataToActuallyEmbed = AesHelper.Encrypt(dataToActuallyEmbed.ToArray(), encryptTextBox.Text);
+                    dataToEmbedInContainers = AesHelper.Encrypt(dataToEmbedInContainers.ToArray(), encryptTextBox.Text);
                 }
                 catch (Exception ex)
                 {
@@ -552,8 +535,7 @@ namespace Stegonagraph
                 }
             }
 
-            // 4. Розподіл та запис у контейнери
-            List<byte> remainingDataToEmbed = new List<byte>(dataToActuallyEmbed);
+            List<byte> remainingDataToEmbed = new List<byte>(dataToEmbedInContainers);
             for (int i = 0; i < containerGridView.Rows.Count && remainingDataToEmbed.Count > 0; i++)
             {
                 if (containerGridView.Rows[i].IsNewRow) continue;
@@ -577,7 +559,7 @@ namespace Stegonagraph
                         case ".png":
                         case ".bmp":
                             using (Bitmap originalImage = new Bitmap(containerPath))
-                            using (Bitmap imageToEncode = new Bitmap(originalImage)) // Копія для кодування
+                            using (Bitmap imageToEncode = new Bitmap(originalImage))
                             {
                                 BMP.bmpEncode(slice, outputFilePath, imageToEncode, stegKey);
                                 if (File.Exists(outputFilePath))
@@ -592,14 +574,12 @@ namespace Stegonagraph
                             }
                             break;
                         case ".wav":
-                            // Припускаємо, що WAV клас коректно обробляє шляхи
                             new WAV(containerPath).WavEncode(slice, outputFilePath, stegKey);
                             break;
                         case ".jpg":
                         case ".jpeg":
                             using (Bitmap originalImage = new Bitmap(containerPath))
                             {
-                                // Клас JPEG має обробляти копіювання файлу, якщо він змінює вхідний
                                 JPEG jpegProcessor = new JPEG(containerPath, true);
                                 jpegProcessor.jpegEncode(slice.ToArray(), outputFilePath, stegKey);
                                 if (File.Exists(outputFilePath))
@@ -660,7 +640,6 @@ namespace Stegonagraph
                             }
                             break;
                         case ".wav":
-                            // Припускаємо, що WAV не IDisposable, якщо так, додайте using
                             dataFromCurrentContainer = new WAV(path).WavDecode((int)containerCapacityBytes, stegKey);
                             break;
                         case ".jpg":
@@ -695,7 +674,6 @@ namespace Stegonagraph
             List<byte> finalPayloadToProcess;
             if (checkBox.Checked)
             {
-                // Обрізка шифротексту, якщо його довжина не кратна 16
                 if (collectedEncryptedOrPlainData.Count % 16 != 0)
                 {
                     int originalLength = collectedEncryptedOrPlainData.Count;
@@ -709,8 +687,6 @@ namespace Stegonagraph
                         {
                             collectedEncryptedOrPlainData.RemoveRange(newLength, originalLength - newLength);
                         }
-                        // Якщо newLength == 0, AesHelper.Decrypt все одно видасть помилку про кратність,
-                        // або про порожній масив, що більш інформативно.
                     }
                 }
                 try
@@ -860,7 +836,6 @@ namespace Stegonagraph
         #region UI misc
         private void BtnContainerRmove_Click(object sender, EventArgs e)
         {
-            // Видаляємо виділені рядки, починаючи з кінця, щоб уникнути проблем з індексацією
             for (int i = containerGridView.SelectedRows.Count - 1; i >= 0; i--)
             {
                 DataGridViewRow r = containerGridView.SelectedRows[i];
@@ -886,12 +861,12 @@ namespace Stegonagraph
 
         private void StegPanel_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // Спроба активувати головну форму, якщо вона ще існує і не знищена
             Form mainForm = Application.OpenForms.OfType<MainForm>().FirstOrDefault();
             if (mainForm != null && !mainForm.IsDisposed)
             {
+
                 mainForm.Activate();
-                if (!mainForm.Visible) mainForm.Show(); // Показуємо, якщо прихована
+                if (!mainForm.Visible) mainForm.Show();
             }
         }
         #endregion

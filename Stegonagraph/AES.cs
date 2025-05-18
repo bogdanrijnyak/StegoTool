@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// Простір імен для стеганографічних утиліт
+//AES шифрование
 namespace Stegonagraph
+{
+    class AES
     {
-        // Клас, що реалізує шифрування за алгоритмом AES
-        class AES
+        private byte[,] SBox = new byte[,]
         {
-            // Стандартна таблиця замін (S-Box) для AES. НЕ ЗМІНЮВАТИ!
-            private byte[,] SBox = new byte[,]
-            {
             { 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76 },
             { 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0 },
             { 0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15 },
@@ -29,11 +27,9 @@ namespace Stegonagraph
             { 0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e },
             { 0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf },
             { 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 }
-            };
-
-            // Стандартна інверсна таблиця замін (Inverse S-Box) для AES. НЕ ЗМІНЮВАТИ!
-            private byte[,] InvSBox = new byte[,]
-            {
+        };
+        private byte[,] invSBox = new byte[,]
+        {
             { 0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB },
             { 0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB },
             { 0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E },
@@ -50,316 +46,483 @@ namespace Stegonagraph
             { 0x60, 0x51, 0x7F, 0xA9, 0x19, 0xB5, 0x4A, 0x0D, 0x2D, 0xE5, 0x7A, 0x9F, 0x93, 0xC9, 0x9C, 0xEF },
             { 0xA0, 0xE0, 0x3B, 0x4D, 0xAE, 0x2A, 0xF5, 0xB0, 0xC8, 0xEB, 0xBB, 0x3C, 0x83, 0x53, 0x99, 0x61 },
             { 0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D }
-            };
+        };
+        private byte[,] Rcon = new byte[,]
+        {
+            { 0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36 },
+            { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 },
+            { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 },
+            { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 },
+        };
+        private byte[,] GMatrix = new byte[,]
+        {
+            { 0x02,0x03,0x01,0x01 },
+            { 0x01,0x02,0x03,0x01 },
+            { 0x01,0x01,0x02,0x03 },
+            { 0x03,0x01,0x01,0x02 }
+        };
+        private byte[,] invGMatrix = new byte[,]
+        {
+            { 0x0E, 0x0B, 0x0D, 0x09 },
+            { 0x09, 0x0E, 0x0B, 0x0D },
+            { 0x0D, 0x09, 0x0E, 0x0B },
+            { 0x0B, 0x0D, 0x09, 0x0E }
+        };
 
-            // Стандартні константи раундів (Rcon) для AES. НЕ ЗМІНЮВАТИ!
-            private byte[] Rcon = new byte[] { 0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36 };
 
-            private int Nb; // Кількість стовпців (32-бітних слів) у State (завжди 4 для AES)
-            private int Nk; // Кількість 32-бітних слів у ключі шифрування (4, 6, або 8)
-            private int Nr; // Кількість раундів (10, 12, або 14)
+        private byte[,,] roundKey = new byte[11, 4, 4];
 
-            // Конструктор класу AES
-            public AES(byte[] masterKey)
+        public AES(String key)
+        {
+            while (key.Length < 16)
+                key += key;
+
+            key = key.Substring(0, 16);
+            byte[,] bkey = new byte[4, 4];
+
+            for (int i = 0; i < 4; i++)
             {
-                // Nb завжди 4 для AES (4 стовпці по 4 байти = 16 байт блок)
-                Nb = 4;
-
-                // Визначення Nk (розмір ключа в словах) та Nr (кількість раундів)
-                // на основі довжини наданого ключа
-                if (masterKey.Length == 16) // AES-128
+                for (int j = 0; j < 4; j++)
                 {
-                    Nk = 4; // 4 слова * 4 байти/слово = 16 байт
-                    Nr = 10; // 10 раундів
-                }
-                else if (masterKey.Length == 24) // AES-192
-                {
-                    Nk = 6; // 6 слів * 4 байти/слово = 24 байти
-                    Nr = 12; // 12 раундів
-                }
-                else if (masterKey.Length == 32) // AES-256
-                {
-                    Nk = 8; // 8 слів * 4 байти/слово = 32 байти
-                    Nr = 14; // 14 раундів
-                }
-                else
-                {
-                    // Якщо довжина ключа не відповідає стандартам AES, генерується виняток
-                    throw new ArgumentException("Некоректна довжина ключа AES. Допустимі довжини: 16, 24 або 32 байти.");
-                }
-            }
-
-            // Метод шифрування блоку даних
-            public byte[] Cipher(byte[] inputDataBlock, byte[] masterKey)
-            {
-                // State - це двовимірний масив байтів 4xNb, де Nb - кількість стовпців (завжди 4 для AES)
-                byte[,] currentState = new byte[4, Nb];
-                // Копіювання вхідних даних у State (по стовпцях)
-                for (int r = 0; r < 4; r++) // r - рядок
-                    for (int c = 0; c < Nb; c++) // c - стовпець
-                        currentState[r, c] = inputDataBlock[r + 4 * c];
-
-                // Генерація розширеного набору ключів (раундових ключів)
-                byte[,,] expandedKeySet = new byte[Nb * (Nr + 1) / 4, 4, 4]; // [раунд, рядок, стовпець]
-                KeyExpansion(masterKey, expandedKeySet);
-
-                // Початкове додавання раундового ключа (AddRoundKey)
-                AddRoundKey(currentState, expandedKeySet, 0);
-
-                // Основні раунди шифрування
-                for (int currentRound = 1; currentRound < Nr; currentRound++)
-                {
-                    SubBytes(currentState);      // Операція заміни байтів
-                    ShiftRows(currentState);     // Операція зсуву рядків
-                    MixColumns(currentState);    // Операція змішування стовпців
-                    AddRoundKey(currentState, expandedKeySet, currentRound); // Додавання раундового ключа
-                }
-
-                // Останній раунд (без MixColumns)
-                SubBytes(currentState);
-                ShiftRows(currentState);
-                AddRoundKey(currentState, expandedKeySet, Nr);
-
-                // Копіювання результату з State у вихідний масив байтів
-                byte[] outputDataBlock = new byte[16];
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < Nb; c++)
-                        outputDataBlock[r + 4 * c] = currentState[r, c];
-
-                return outputDataBlock;
-            }
-
-            // Метод дешифрування блоку даних
-            public byte[] InvCipher(byte[] inputDataBlock, byte[] masterKey)
-            {
-                byte[,] currentState = new byte[4, Nb];
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < Nb; c++)
-                        currentState[r, c] = inputDataBlock[r + 4 * c];
-
-                byte[,,] expandedKeySet = new byte[Nb * (Nr + 1) / 4, 4, 4];
-                KeyExpansion(masterKey, expandedKeySet);
-
-                // Початкове додавання раундового ключа (використовується ключ останнього раунду шифрування)
-                AddRoundKey(currentState, expandedKeySet, Nr);
-
-                // Основні раунди дешифрування (зворотний порядок операцій)
-                for (int currentRound = Nr - 1; currentRound >= 1; currentRound--)
-                {
-                    InvShiftRows(currentState); // Інверсний зсув рядків
-                    InvSubBytes(currentState);  // Інверсна заміна байтів
-                    AddRoundKey(currentState, expandedKeySet, currentRound); // Додавання раундового ключа
-                    InvMixColumns(currentState); // Інверсне змішування стовпців
-                }
-
-                // Останній раунд дешифрування (без InvMixColumns)
-                InvShiftRows(currentState);
-                InvSubBytes(currentState);
-                AddRoundKey(currentState, expandedKeySet, 0);
-
-                byte[] outputDataBlock = new byte[16];
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < Nb; c++)
-                        outputDataBlock[r + 4 * c] = currentState[r, c];
-
-                return outputDataBlock;
-            }
-
-            // Операція SubBytes: заміна кожного байта в State за допомогою S-Box
-            private void SubBytes(byte[,] stateMatrix)
-            {
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < Nb; c++)
-                        stateMatrix[r, c] = SBox[stateMatrix[r, c] >> 4, stateMatrix[r, c] & 0x0F]; // Старші 4 біти - рядок, молодші 4 - стовпець S-Box
-            }
-
-            // Операція InvSubBytes: заміна кожного байта в State за допомогою InvS-Box
-            private void InvSubBytes(byte[,] stateMatrix)
-            {
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < Nb; c++)
-                        stateMatrix[r, c] = InvSBox[stateMatrix[r, c] >> 4, stateMatrix[r, c] & 0x0F];
-            }
-
-            // Операція ShiftRows: циклічний зсув байтів у рядках State
-            private void ShiftRows(byte[,] stateMatrix)
-            {
-                byte temporaryByte;
-                // Рядок 0: не зсувається
-                // Рядок 1: зсув на 1 байт вліво
-                temporaryByte = stateMatrix[1, 0];
-                stateMatrix[1, 0] = stateMatrix[1, 1];
-                stateMatrix[1, 1] = stateMatrix[1, 2];
-                stateMatrix[1, 2] = stateMatrix[1, 3];
-                stateMatrix[1, 3] = temporaryByte;
-                // Рядок 2: зсув на 2 байти вліво
-                temporaryByte = stateMatrix[2, 0];
-                stateMatrix[2, 0] = stateMatrix[2, 2];
-                stateMatrix[2, 2] = temporaryByte;
-                temporaryByte = stateMatrix[2, 1];
-                stateMatrix[2, 1] = stateMatrix[2, 3];
-                stateMatrix[2, 3] = temporaryByte;
-                // Рядок 3: зсув на 3 байти вліво
-                temporaryByte = stateMatrix[3, 0];
-                stateMatrix[3, 0] = stateMatrix[3, 3];
-                stateMatrix[3, 3] = stateMatrix[3, 2];
-                stateMatrix[3, 2] = stateMatrix[3, 1];
-                stateMatrix[3, 1] = temporaryByte;
-            }
-
-            // Операція InvShiftRows: інверсний циклічний зсув байтів у рядках State
-            private void InvShiftRows(byte[,] stateMatrix)
-            {
-                byte temporaryByte;
-                // Рядок 0: не зсувається
-                // Рядок 1: зсув на 1 байт вправо
-                temporaryByte = stateMatrix[1, 3];
-                stateMatrix[1, 3] = stateMatrix[1, 2];
-                stateMatrix[1, 2] = stateMatrix[1, 1];
-                stateMatrix[1, 1] = stateMatrix[1, 0];
-                stateMatrix[1, 0] = temporaryByte;
-                // Рядок 2: зсув на 2 байти вправо
-                temporaryByte = stateMatrix[2, 0];
-                stateMatrix[2, 0] = stateMatrix[2, 2];
-                stateMatrix[2, 2] = temporaryByte;
-                temporaryByte = stateMatrix[2, 1];
-                stateMatrix[2, 1] = stateMatrix[2, 3];
-                stateMatrix[2, 3] = temporaryByte;
-                // Рядок 3: зсув на 3 байти вправо
-                temporaryByte = stateMatrix[3, 0];
-                stateMatrix[3, 0] = stateMatrix[3, 1];
-                stateMatrix[3, 1] = stateMatrix[3, 2];
-                stateMatrix[3, 2] = stateMatrix[3, 3];
-                stateMatrix[3, 3] = temporaryByte;
-            }
-
-            // Операція MixColumns: змішування даних у кожному стовпці State
-            private void MixColumns(byte[,] stateMatrix)
-            {
-                byte[,] temporaryState = new byte[4, 4]; // Тимчасовий масив для зберігання результатів
-                for (int col = 0; col < 4; col++) // Обробка кожного стовпця
-                {
-                    temporaryState[0, col] = (byte)(gmul(stateMatrix[0, col], 2, 283) ^ gmul(stateMatrix[1, col], 3, 283) ^ stateMatrix[2, col] ^ stateMatrix[3, col]);
-                    temporaryState[1, col] = (byte)(stateMatrix[0, col] ^ gmul(stateMatrix[1, col], 2, 283) ^ gmul(stateMatrix[2, col], 3, 283) ^ stateMatrix[3, col]);
-                    temporaryState[2, col] = (byte)(stateMatrix[0, col] ^ stateMatrix[1, col] ^ gmul(stateMatrix[2, col], 2, 283) ^ gmul(stateMatrix[3, col], 3, 283));
-                    temporaryState[3, col] = (byte)(gmul(stateMatrix[0, col], 3, 283) ^ stateMatrix[1, col] ^ stateMatrix[2, col] ^ gmul(stateMatrix[3, col], 2, 283));
-                }
-                // Копіювання результатів з тимчасового масиву назад у stateMatrix
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < 4; c++)
-                        stateMatrix[r, c] = temporaryState[r, c];
-            }
-
-            // Операція InvMixColumns: інверсне змішування даних у кожному стовпці State
-            private void InvMixColumns(byte[,] stateMatrix)
-            {
-                byte[,] temporaryState = new byte[4, 4];
-                for (int col = 0; col < 4; col++)
-                {
-                    temporaryState[0, col] = (byte)(gmul(stateMatrix[0, col], 14, 283) ^ gmul(stateMatrix[1, col], 11, 283) ^ gmul(stateMatrix[2, col], 13, 283) ^ gmul(stateMatrix[3, col], 9, 283));
-                    temporaryState[1, col] = (byte)(gmul(stateMatrix[0, col], 9, 283) ^ gmul(stateMatrix[1, col], 14, 283) ^ gmul(stateMatrix[2, col], 11, 283) ^ gmul(stateMatrix[3, col], 13, 283));
-                    temporaryState[2, col] = (byte)(gmul(stateMatrix[0, col], 13, 283) ^ gmul(stateMatrix[1, col], 9, 283) ^ gmul(stateMatrix[2, col], 14, 283) ^ gmul(stateMatrix[3, col], 11, 283));
-                    temporaryState[3, col] = (byte)(gmul(stateMatrix[0, col], 11, 283) ^ gmul(stateMatrix[1, col], 13, 283) ^ gmul(stateMatrix[2, col], 9, 283) ^ gmul(stateMatrix[3, col], 14, 283));
-                }
-                for (int r = 0; r < 4; r++)
-                    for (int c = 0; c < 4; c++)
-                        stateMatrix[r, c] = temporaryState[r, c];
-            }
-
-            // Операція AddRoundKey: XOR поточного State з відповідним раундовим ключем
-            private void AddRoundKey(byte[,] stateMatrix, byte[,,] expandedKeySet, int roundIndex)
-            {
-                for (int c = 0; c < Nb; c++) // Для кожного стовпця
-                    for (int r = 0; r < 4; r++) // Для кожного рядка
-                        stateMatrix[r, c] = (byte)(stateMatrix[r, c] ^ expandedKeySet[roundIndex, r, c]);
-            }
-
-            // Розширення ключа: генерація набору раундових ключів з майстер-ключа
-            private void KeyExpansion(byte[] masterKeyBytes, byte[,,] expandedKeyStorage)
-            {
-                byte[] tempWord = new byte[4]; // Тимчасове слово (4 байти) для обчислень
-
-                // Копіювання майстер-ключа в перші Nk слів розширеного ключа
-                for (int wordNum = 0; wordNum < Nk; wordNum++)
-                {
-                    expandedKeyStorage[wordNum / 4, 0, wordNum % 4] = masterKeyBytes[4 * wordNum];
-                    expandedKeyStorage[wordNum / 4, 1, wordNum % 4] = masterKeyBytes[4 * wordNum + 1];
-                    expandedKeyStorage[wordNum / 4, 2, wordNum % 4] = masterKeyBytes[4 * wordNum + 2];
-                    expandedKeyStorage[wordNum / 4, 3, wordNum % 4] = masterKeyBytes[4 * wordNum + 3];
-                }
-
-                // Генерація решти слів розширеного ключа
-                for (int wordNum = Nk; wordNum < Nb * (Nr + 1); wordNum++)
-                {
-                    // Копіювання попереднього слова (w[i-1]) у tempWord
-                    tempWord[0] = expandedKeyStorage[(wordNum - 1) / 4, 0, (wordNum - 1) % 4];
-                    tempWord[1] = expandedKeyStorage[(wordNum - 1) / 4, 1, (wordNum - 1) % 4];
-                    tempWord[2] = expandedKeyStorage[(wordNum - 1) / 4, 2, (wordNum - 1) % 4];
-                    tempWord[3] = expandedKeyStorage[(wordNum - 1) / 4, 3, (wordNum - 1) % 4];
-
-                    // Якщо це перше слово нового раундового ключа (i % Nk == 0)
-                    if (wordNum % Nk == 0)
-                    {
-                        // RotWord: циклічний зсув байтів у слові вліво
-                        byte firstByte = tempWord[0];
-                        tempWord[0] = tempWord[1];
-                        tempWord[1] = tempWord[2];
-                        tempWord[2] = tempWord[3];
-                        tempWord[3] = firstByte;
-
-                        // SubWord: заміна кожного байта слова за допомогою S-Box
-                        tempWord[0] = SBox[tempWord[0] >> 4, tempWord[0] & 0x0F];
-                        tempWord[1] = SBox[tempWord[1] >> 4, tempWord[1] & 0x0F];
-                        tempWord[2] = SBox[tempWord[2] >> 4, tempWord[2] & 0x0F];
-                        tempWord[3] = SBox[tempWord[3] >> 4, tempWord[3] & 0x0F];
-
-                        // XOR з Rcon[i/Nk] (тільки для першого байта слова)
-                        tempWord[0] = (byte)(tempWord[0] ^ Rcon[wordNum / Nk]);
-                    }
-                    // Для AES-256 (Nk=8), якщо i % Nk == 4, застосовується SubWord до tempWord
-                    else if (Nk > 6 && wordNum % Nk == 4)
-                    {
-                        tempWord[0] = SBox[tempWord[0] >> 4, tempWord[0] & 0x0F];
-                        tempWord[1] = SBox[tempWord[1] >> 4, tempWord[1] & 0x0F];
-                        tempWord[2] = SBox[tempWord[2] >> 4, tempWord[2] & 0x0F];
-                        tempWord[3] = SBox[tempWord[3] >> 4, tempWord[3] & 0x0F];
-                    }
-
-                    // w[i] = w[i-Nk] XOR tempWord
-                    expandedKeyStorage[wordNum / 4, 0, wordNum % 4] = (byte)(expandedKeyStorage[(wordNum - Nk) / 4, 0, (wordNum - Nk) % 4] ^ tempWord[0]);
-                    expandedKeyStorage[wordNum / 4, 1, wordNum % 4] = (byte)(expandedKeyStorage[(wordNum - Nk) / 4, 1, (wordNum - Nk) % 4] ^ tempWord[1]);
-                    expandedKeyStorage[wordNum / 4, 2, wordNum % 4] = (byte)(expandedKeyStorage[(wordNum - Nk) / 4, 2, (wordNum - Nk) % 4] ^ tempWord[2]);
-                    expandedKeyStorage[wordNum / 4, 3, wordNum % 4] = (byte)(expandedKeyStorage[(wordNum - Nk) / 4, 3, (wordNum - Nk) % 4] ^ tempWord[3]);
+                    bkey[i, j] = (byte)key[i * 4 + j];
                 }
             }
 
-            // Множення в полі Галуа GF(2^8) для MixColumns та InvMixColumns
-            // irreduciblePolynomial - незвідний поліном (x^8 + x^4 + x^3 + x + 1, або 0x11B)
-            private Byte gmul(Byte firstOperand, Byte secondOperand, UInt16 irreduciblePolynomial)
+            KeyShedudle(bkey);
+
+        }
+
+        //шифрование аргумент байт поток
+        public byte[] Encrypt(byte[] plainText)
+        {
+            byte[,] mPlainText = new byte[4, 4];
+
+            for (int i = 0; i < plainText.Length / 16; i++)
             {
-                UInt16 operandA = firstOperand;
-                UInt16 operandB = secondOperand;
-                UInt16 productSum = 0;
-                String binaryRepresentationA = Convert.ToString(operandA, 2); // Двійкове представлення першого операнда
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        mPlainText[j, k] = (byte)plainText[i * 16 + j * 4 + k];
 
-                // Алгоритм "селянського множення" (Peasant multiplication)
-                for (int bitIndex = 0; bitIndex < binaryRepresentationA.Length; bitIndex++)
+                mPlainText = EncryptForOneCycle(mPlainText);
+
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        plainText[i * 16 + j * 4 + k] = mPlainText[j, k];
+            }
+
+            return plainText;
+        }
+
+        //рашифровка аргумент байт поток
+        public byte[] DeCrypt(byte[] plainText)
+        {
+            byte[,] mPlainText = new byte[4, 4];
+
+            for (int i = 0; i < plainText.Length / 16; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        mPlainText[j, k] = (byte)plainText[i * 16 + j * 4 + k];
+
+                mPlainText = DecryptForOneCycle(mPlainText);
+
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        plainText[i * 16 + j * 4 + k] = mPlainText[j, k];
+            }
+
+            return plainText;
+        }
+
+
+        //шифрование аргумент байт текст
+        public String Encrypt(String plainText)
+        {
+            String endStr = "";
+            byte[,] mPlainText = new byte[4, 4];
+
+            while (plainText.Length % 16 != 0)
+                plainText = plainText + "0";
+
+            for (int i = 0; i < plainText.Length / 16; i++)
+            {
+                String str = plainText.Substring(i * 16, 16);
+
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        mPlainText[j, k] = (byte)plainText[i * 16 + j * 4 + k];
+
+                mPlainText = EncryptForOneCycle(mPlainText);
+
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        endStr += ((char)mPlainText[j, k]).ToString();
+            }
+
+            return endStr;
+        }
+
+        //шифрование аргумент текст
+        public String DeCrypt(String plainText)
+        {
+            String endStr = "";
+            byte[,] mPlainText = new byte[4, 4];
+
+            while (plainText.Length % 16 != 0)
+                plainText = plainText + "0";
+
+            for (int i = 0; i < plainText.Length / 16; i++)
+            {
+                String str = plainText.Substring(i * 16, 16);
+
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        mPlainText[j, k] = (byte)plainText[i * 16 + j * 4 + k];
+
+                mPlainText = DecryptForOneCycle(mPlainText);
+
+                for (int j = 0; j < 4; j++)
+                    for (int k = 0; k < 4; k++)
+                        endStr += ((char)mPlainText[j, k]).ToString();
+            }
+
+            return endStr;
+        }
+
+        private byte[,] EncryptForOneCycle(byte[,] bPlainText)
+        {
+
+            byte[] arrBt;
+
+            //AddRoundKey
+            for (int k = 0; k < 4; k++)
+            {
+                bPlainText[0, k] ^= roundKey[0, 0, k];
+                bPlainText[1, k] ^= roundKey[0, 1, k];
+                bPlainText[2, k] ^= roundKey[0, 2, k];
+                bPlainText[3, k] ^= roundKey[0, 3, k];
+            }
+
+            for (int j = 1; j < 10; j++)
+            {
+                //SubBytes
+                for (int k = 0; k < 4; k++)
                 {
-                    if (binaryRepresentationA[binaryRepresentationA.Length - 1 - bitIndex] == '1')
-                    {
-                        productSum ^= (UInt16)(operandB << bitIndex); // XOR з другим операндом, зсунутим на bitIndex
-                    }
+                    arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+                    arrBt = SubBytes(arrBt);
+                    bPlainText[k, 0] = arrBt[0];
+                    bPlainText[k, 1] = arrBt[1];
+                    bPlainText[k, 2] = arrBt[2];
+                    bPlainText[k, 3] = arrBt[3];
+
                 }
 
-                // Зменшення результату за модулем незвідного полінома
-                // Поки степінь productSum більша або дорівнює степені irreduciblePolynomial
-                while (productSum != 0 && irreduciblePolynomial != 0 && (int)Math.Log(productSum, 2) - (int)Math.Log(irreduciblePolynomial, 2) >= 0)
+                //ShiftRows
+                for (int k = 1; k < 4; k++)
                 {
-                    // Визначаємо, на скільки потрібно зсунути поліном
-                    UInt16 shiftAmount = (UInt16)((int)Math.Log(productSum, 2) - (int)Math.Log(irreduciblePolynomial, 2));
-                    productSum ^= (UInt16)(irreduciblePolynomial << shiftAmount); // XOR з зсунутим поліномом
+                    arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+
+                    arrBt = RotCell(new byte[4] { arrBt[0], arrBt[1], arrBt[2], arrBt[3] }, k);
+
+                    bPlainText[k, 0] = arrBt[0];
+                    bPlainText[k, 1] = arrBt[1];
+                    bPlainText[k, 2] = arrBt[2];
+                    bPlainText[k, 3] = arrBt[3];
                 }
-                return Convert.ToByte(productSum); // Повертаємо результат як байт
+
+                //MixColumns
+                for (int k = 0; k < 4; k++)
+                {
+                    arrBt = new byte[4] { bPlainText[0, k], bPlainText[1, k], bPlainText[2, k], bPlainText[3, k] };
+
+                    arrBt = MatrixMultiplication(GMatrix, arrBt, 283);
+                    bPlainText[0, k] = arrBt[0];
+                    bPlainText[1, k] = arrBt[1];
+                    bPlainText[2, k] = arrBt[2];
+                    bPlainText[3, k] = arrBt[3];
+                }
+
+                //AddRoundKey
+                for (int k = 0; k < 4; k++)
+                {
+                    bPlainText[0, k] ^= roundKey[j, 0, k];
+                    bPlainText[1, k] ^= roundKey[j, 1, k];
+                    bPlainText[2, k] ^= roundKey[j, 2, k];
+                    bPlainText[3, k] ^= roundKey[j, 3, k];
+                }
+            }
+
+            //SubBytes
+            for (int k = 0; k < 4; k++)
+            {
+                arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+                arrBt = SubBytes(arrBt);
+                bPlainText[k, 0] = arrBt[0];
+                bPlainText[k, 1] = arrBt[1];
+                bPlainText[k, 2] = arrBt[2];
+                bPlainText[k, 3] = arrBt[3];
+
+            }
+
+            //ShiftRows
+            for (int k = 1; k < 4; k++)
+            {
+                arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+
+                arrBt = RotCell(new byte[4] { arrBt[0], arrBt[1], arrBt[2], arrBt[3] }, k);
+
+                bPlainText[k, 0] = arrBt[0];
+                bPlainText[k, 1] = arrBt[1];
+                bPlainText[k, 2] = arrBt[2];
+                bPlainText[k, 3] = arrBt[3];
+            }
+
+            //AddRoundKey
+            for (int k = 0; k < 4; k++)
+            {
+                bPlainText[0, k] ^= roundKey[10, 0, k];
+                bPlainText[1, k] ^= roundKey[10, 1, k];
+                bPlainText[2, k] ^= roundKey[10, 2, k];
+                bPlainText[3, k] ^= roundKey[10, 3, k];
+            }
+
+            return bPlainText;
+        }
+        private byte[,] DecryptForOneCycle(byte[,] bPlainText)
+        {
+
+            byte[] arrBt;
+
+            for (int k = 0; k < 4; k++)
+            {
+                bPlainText[0, k] ^= roundKey[10, 0, k];
+                bPlainText[1, k] ^= roundKey[10, 1, k];
+                bPlainText[2, k] ^= roundKey[10, 2, k];
+                bPlainText[3, k] ^= roundKey[10, 3, k];
+            }
+
+            for (int j = 9; j > 0; j--)
+            {
+                //InvShiftRows
+                for (int k = 1; k < 4; k++)
+                {
+                    arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+
+                    arrBt = InvRotCell(new byte[4] { arrBt[0], arrBt[1], arrBt[2], arrBt[3] }, k);
+
+                    bPlainText[k, 0] = arrBt[0];
+                    bPlainText[k, 1] = arrBt[1];
+                    bPlainText[k, 2] = arrBt[2];
+                    bPlainText[k, 3] = arrBt[3];
+                }
+
+                //InvSubBytes
+                for (int k = 0; k < 4; k++)
+                {
+                    arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+                    arrBt = InvSubBytes(arrBt);
+                    bPlainText[k, 0] = arrBt[0];
+                    bPlainText[k, 1] = arrBt[1];
+                    bPlainText[k, 2] = arrBt[2];
+                    bPlainText[k, 3] = arrBt[3];
+
+                }
+
+                //AddRoundKey
+                for (int k = 0; k < 4; k++)
+                {
+                    bPlainText[0, k] ^= roundKey[j, 0, k];
+                    bPlainText[1, k] ^= roundKey[j, 1, k];
+                    bPlainText[2, k] ^= roundKey[j, 2, k];
+                    bPlainText[3, k] ^= roundKey[j, 3, k];
+                }
+
+                //InvMixColumns
+                for (int k = 0; k < 4; k++)
+                {
+                    arrBt = new byte[4] { bPlainText[0, k], bPlainText[1, k], bPlainText[2, k], bPlainText[3, k] };
+
+                    arrBt = MatrixMultiplication(invGMatrix, arrBt, 283);
+                    bPlainText[0, k] = arrBt[0];
+                    bPlainText[1, k] = arrBt[1];
+                    bPlainText[2, k] = arrBt[2];
+                    bPlainText[3, k] = arrBt[3];
+                }
+            }
+
+            //InvShiftRows
+            for (int k = 1; k < 4; k++)
+            {
+                arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+                arrBt = InvRotCell(new byte[4] { arrBt[0], arrBt[1], arrBt[2], arrBt[3] }, k);
+
+                bPlainText[k, 0] = arrBt[0];
+                bPlainText[k, 1] = arrBt[1];
+                bPlainText[k, 2] = arrBt[2];
+                bPlainText[k, 3] = arrBt[3];
+            }
+
+            //InvSubBytes
+            for (int k = 0; k < 4; k++)
+            {
+                arrBt = new byte[4] { bPlainText[k, 0], bPlainText[k, 1], bPlainText[k, 2], bPlainText[k, 3] };
+                arrBt = InvSubBytes(arrBt);
+                bPlainText[k, 0] = arrBt[0];
+                bPlainText[k, 1] = arrBt[1];
+                bPlainText[k, 2] = arrBt[2];
+                bPlainText[k, 3] = arrBt[3];
+
+            }
+
+            //AddRoundKey
+            for (int k = 0; k < 4; k++)
+            {
+                bPlainText[0, k] ^= roundKey[0, 0, k];
+                bPlainText[1, k] ^= roundKey[0, 1, k];
+                bPlainText[2, k] ^= roundKey[0, 2, k];
+                bPlainText[3, k] ^= roundKey[0, 3, k];
+            }
+
+            return bPlainText;
+        }
+        private byte[] SubBytes(byte[] arrByte)
+        {
+
+            for (int i = 0; i < arrByte.Length; i++)
+            {
+                String str = "";
+                str = arrByte[i].ToString("X");
+
+                if (str.Length == 1)
+                    str = "0" + str;
+
+                byte row = byte.Parse(str.Substring(0, 1), System.Globalization.NumberStyles.HexNumber),
+                    cl = byte.Parse(str.Substring(1, 1), System.Globalization.NumberStyles.HexNumber);
+
+                arrByte[i] = SBox[row, cl];
+            }
+
+            return arrByte;
+        }
+        private byte[] InvSubBytes(byte[] arrByte)
+        {
+            for (int i = 0; i < arrByte.Length; i++)
+            {
+                String str = "";
+                str = arrByte[i].ToString("X");
+
+                if (str.Length == 1)
+                    str = "0" + str;
+
+                byte row = byte.Parse(str.Substring(0, 1), System.Globalization.NumberStyles.HexNumber),
+                    cl = byte.Parse(str.Substring(1, 1), System.Globalization.NumberStyles.HexNumber);
+
+                arrByte[i] = invSBox[row, cl];
+            }
+
+            return arrByte;
+        }
+        private byte[] RotCell(byte[] arrByte, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                byte bt = arrByte[0];
+
+                for (int j = 0; j < 3; j++)
+                    arrByte[j] = arrByte[j + 1];
+
+                arrByte[3] = bt;
+            }
+
+            return arrByte;
+        }
+        private byte[] InvRotCell(byte[] arrByte, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                byte bt = arrByte[3];
+
+                for (int j = 3; j > 0; j--)
+                    arrByte[j] = arrByte[j - 1];
+
+                arrByte[0] = bt;
+            }
+
+            return arrByte;
+        }
+        private void KeyShedudle(byte[,] bkey)
+        {
+            byte[] shablon = new byte[4];
+
+            for (int j = 0; j < 4; j++)
+            {
+                roundKey[0, j, 0] = bkey[j, 0];
+                roundKey[0, j, 1] = bkey[j, 1];
+                roundKey[0, j, 2] = bkey[j, 2];
+                roundKey[0, j, 3] = bkey[j, 3];
+            }
+
+            for (int j = 0; j < 4; j++)
+                shablon[j] = bkey[j, 3];
+
+            for (int i = 1; i < 11; i++)
+            {
+                shablon = RotCell(shablon, 1);
+                shablon = SubBytes(shablon);
+
+                for (int j = 0; j < 4; j++)
+                    roundKey[i, j, 0] = (byte)(shablon[j] ^ roundKey[i - 1, j, 0] ^ Rcon[j, i - 1]);
+
+                for (int j = 0; j < 4; j++)
+                    roundKey[i, j, 1] = (byte)(roundKey[i, j, 0] ^ roundKey[i - 1, j, 1]);
+
+                for (int j = 0; j < 4; j++)
+                    roundKey[i, j, 2] = (byte)(roundKey[i, j, 1] ^ roundKey[i - 1, j, 2]);
+
+                for (int j = 0; j < 4; j++)
+                    roundKey[i, j, 3] = (byte)(roundKey[i, j, 2] ^ roundKey[i - 1, j, 3]);
+
+                for (int j = 0; j < 4; j++)
+                    shablon[j] = roundKey[i, j, 3];
+
             }
         }
+        private Byte gmul(Byte a, Byte b, UInt16 modeNum)
+        {
+            UInt16 fNum = a, sNum = b, sum = 0;
+            String binarFNum = Convert.ToString(fNum, 2);
+
+            for (int i = 0; i < binarFNum.Length; i++)
+                if (binarFNum[binarFNum.Length - 1 - i] == '1')
+                    sum ^= (UInt16)(sNum << i);
+
+
+            while ((int)Math.Log(sum, 2) - (int)Math.Log(modeNum, 2) >= 0 && sum != 0)
+            {
+                UInt16 shiftCount = (UInt16)((int)Math.Log(sum, 2) - (int)Math.Log(modeNum, 2));
+                sum ^= (UInt16)(modeNum << shiftCount);
+            }
+
+            return Convert.ToByte(sum);
+        }
+
+        //modeNum=283
+        private byte[] MatrixMultiplication(Byte[,] fElement, Byte[] sElement, UInt16 modeNum)
+        {
+            byte[] arrBt = new byte[4];
+
+            for (int i = 0; i < fElement.GetLength(0); i++)
+            {
+                byte sum = 0;
+                for (int j = 0; j < fElement.GetLength(1); j++)
+                    sum ^= gmul(fElement[i, j], sElement[j], modeNum);
+
+
+                arrBt[i] = sum;
+            }
+
+            return arrBt;
+        }
+
     }
+}

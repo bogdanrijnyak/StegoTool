@@ -116,11 +116,9 @@
     <None Include="Resources\lock_open.png" />
     <None Include="Resources\logo.png" />
     <None Include="Resources\logo - Copy.png" />
-    <Content Include="x1.ico" />
     <EmbeddedResource Include="Image\false.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="Image\favicon.ico" />
     <EmbeddedResource Include="Image\true.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
